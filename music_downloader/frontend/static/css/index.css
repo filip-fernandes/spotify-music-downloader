@@ -1,0 +1,12 @@
+.music-text
+{
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.music-text:hover{
+    overflow: visible; 
+    white-space: normal;
+    height: auto;  /* just added this line */
+}
