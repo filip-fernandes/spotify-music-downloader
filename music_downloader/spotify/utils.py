@@ -1,14 +1,21 @@
-from .models import SpotifyToken
-from django.utils import timezone
 from datetime import timedelta
+
+from .models import SpotifyToken
 from .credentials import CLIENT_ID, CLIENT_SECRET
+
+from django.utils import timezone
+from django.http import HttpResponse
+
 from requests import JSONDecodeError, post, put, get
 
-from pytube import YouTube, Search
+from wsgiref.util import FileWrapper
+from pathlib import Path
+
+from pytube import YouTube
 
 
+# The Spotify API url
 BASE_URL = "https://api.spotify.com/v1/"
-
 
 def get_user_tokens(session_id):
     user_tokens = SpotifyToken.objects.filter(user=session_id)
@@ -18,11 +25,11 @@ def get_user_tokens(session_id):
     else:
         return None
 
-
 def update_or_create_user_tokens(session_id, access_token, token_type, expires_in, refresh_token):
     tokens = get_user_tokens(session_id)
     expires_in = timezone.now() + timedelta(seconds=expires_in)
 
+    # Update existing token
     if tokens:
         tokens.access_token = access_token
         tokens.refresh_token = refresh_token
@@ -31,23 +38,11 @@ def update_or_create_user_tokens(session_id, access_token, token_type, expires_i
         tokens.save(update_fields=[
             "access_token", "refresh_token", "expires_in", "token_type"
         ])
+    # Create new token
     else:
         tokens = SpotifyToken(user=session_id, access_token=access_token,
                               refresh_token=refresh_token, token_type=token_type, expires_in=expires_in)
         tokens.save()
-
-
-def is_spotify_authenticated(session_id):
-    tokens = get_user_tokens(session_id)
-    if tokens:
-        expire_date = tokens.expires_in
-        if expire_date <= timezone.now():
-            refresh_spotify_token(session_id)
-
-        return True
-
-    return False
-
 
 def refresh_spotify_token(session_id):
     refresh_token = get_user_tokens(session_id).refresh_token
@@ -67,6 +62,17 @@ def refresh_spotify_token(session_id):
     update_or_create_user_tokens(
         session_id, access_token, token_type, expires_in, refresh_token)
 
+def is_spotify_authenticated(session_id):
+    tokens = get_user_tokens(session_id)
+    if tokens:
+        expire_date = tokens.expires_in
+        if expire_date <= timezone.now():
+            refresh_spotify_token(session_id)
+        return True
+
+    return False
+
+# Fetch data from any endpoint from the Spotify API
 def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
     tokens = get_user_tokens(session_id)
     headers = {
@@ -102,15 +108,15 @@ def get_playlists(session_id):
     for playlist in playlist_data:
         playlist_id.append(playlist["id"])
 
-    tracks_data = [execute_spotify_api_request(
+    raw_data = [execute_spotify_api_request(
         session_id, endpoint=f"playlists/{id}/tracks"
         ).get("items") for id in playlist_id]
     
     # Filter data and get only names and artists
-    response = []
-    for playlist in tracks_data:
+    data = []
+    for playlist in raw_data:
         for item in playlist:
-            response.append(
+            data.append(
                 {
                     "name": item["track"]["name"],  
                     "image": item["track"]["album"]["images"][1]["url"],
@@ -118,13 +124,20 @@ def get_playlists(session_id):
                         for i in range(len(item["track"]["artists"]))}
                 }
             )
-    return response
+    return data
 
-def download_music(params):
-    search = Search(params)
-    id = search.results[0].video_id
-    yt = YouTube(f"youtube.com/watch?v={id}")
-    audio = yt.streams.get_audio_only()
+# Donwload the desired song from Youtube
+def download_music(search):
+    yt = YouTube(f"youtube.com/watch?v={search.results[0].video_id}")
+    audio = yt.streams.get_audio_only() # Buggy, need to change
 
     output = audio.download(output_path="output")
-    return output, yt.title;
+
+    path = Path(output)
+    document = open(path, 'rb')
+
+    # Make the song downloadable from the webapp
+    response = HttpResponse(FileWrapper(document), content_type='video/mp4')
+    response['Content-Disposition'] = 'attachment; filename="%s"' % f"{yt.title}.mp4"
+
+    return response

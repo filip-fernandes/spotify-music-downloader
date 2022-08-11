@@ -1,21 +1,19 @@
-from wsgiref.util import FileWrapper
-from pathlib import Path
-
 from django.shortcuts import redirect
-from django.http import HttpResponse
 
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import generics
+
 from requests import Request, post
 
 from .credentials import REDIRECT_URI, CLIENT_SECRET, CLIENT_ID
 from .utils import *
 
-from pytube import YouTube, Search
+from pytube import Search
 
 
+# Generates Spotify OAuth URL
 class AuthURL(APIView):
     def get(self, request, format=None):
         scopes = "playlist-read-private"
@@ -29,6 +27,7 @@ class AuthURL(APIView):
 
         return Response({'url': url}, status=status.HTTP_200_OK)
 
+# Get the tokens after user logged in
 def spotify_callback(request, format=None):
     code = request.GET.get("code")
     error = request.GET.get("error")
@@ -60,6 +59,7 @@ def spotify_callback(request, format=None):
     return redirect("http://127.0.0.1:8000/")
 
 
+# Check whether user is logged in
 class IsAuthenticated(APIView):
     def get(self, request, format=None):
         is_authenticated = is_spotify_authenticated(
@@ -67,6 +67,7 @@ class IsAuthenticated(APIView):
         return Response({"status": is_authenticated}, status=status.HTTP_200_OK)
 
 
+# Log user off their account 
 class Logoff(APIView):
     def get(self, request, format=None):
         if is_spotify_authenticated(
@@ -77,6 +78,7 @@ class Logoff(APIView):
         return Response({"error": "User not logged in"}, status=status.HTTP_204_NO_CONTENT)
 
 
+# Return all the user's useful playlist data
 class GetPlaylists(APIView):
     def get(self, request, format=None):
         if not is_spotify_authenticated(
@@ -88,23 +90,17 @@ class GetPlaylists(APIView):
         return Response(response, status=status.HTTP_200_OK)
 
 
+# Download the song to the "output" folder
 class DownloadMusic(generics.ListAPIView):
     def get(self, request, format=None):
 
         search = Search(request.GET["q"])
         if not search:
             return Response({"status": None}, status.HTTP_404_NOT_FOUND)
-            
-        yt = YouTube(f"youtube.com/watch?v={search.results[0].video_id}")
-        audio = yt.streams.get_audio_only()
 
-        output = audio.download(output_path="output")
-
-        path = Path(output)
-        document = open(path, 'rb')
-        response = HttpResponse(FileWrapper(document), content_type='video/mp4')
-        response['Content-Disposition'] = 'attachment; filename="%s"' % f"{yt.title}.mp4"
+        response = download_music(search)
 
         return response
       
 
+ 

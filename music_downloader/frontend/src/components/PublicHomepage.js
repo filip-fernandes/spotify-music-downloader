@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
-import ShowMusics from "./ShowMusics";
-import { Link } from "react-router-dom";
-import AppNavbar from "./Navbar";
+import React from "react";
+
 
 function PublicHomepage(props) {
-
     return (
         <div align="center">
             <h2>

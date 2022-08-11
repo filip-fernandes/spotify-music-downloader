@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import ShowMusics from "./ShowMusics";
-import { Link } from "react-router-dom";
 import AppNavbar from "./Navbar";
 import PublicHomepage from "./PublicHomepage";
+
 
 export default function App(props) {
     const [logged, setLogged] = useState(0);
@@ -15,7 +15,6 @@ export default function App(props) {
             setLogged(data.status)
         });
     }, []);
-
 
     return (
         <React.Fragment>
