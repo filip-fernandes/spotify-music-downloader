@@ -1,25 +1,38 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import ShowMusics from "./ShowMusics";
-import AppNavbar from "./Navbar";
 import PublicHomepage from "./PublicHomepage";
+import Navbar from "./Navbar"
+import ShowAllMusics from "./ShowAllMusics";
 
 
 export default function App(props) {
-    const [logged, setLogged] = useState(0);
+
+    const [url, setUrl] = useState(0);
+    const [loggedIn, setLoggedIn] = useState(0);
+    const [search, setSearch] = useState(0);
 
     useEffect(async() => {
-        return fetch("/spotify/is-authenticated")
-        .then((response) => response.json())
-        .then((data) => {
-            setLogged(data.status)
-        });
+        fetch("/spotify/is-authenticated")
+            .then((response) => response.json())
+            .then((data) => {
+                setLoggedIn(data.status)
+            });
+        fetch("/spotify/get-auth-url")
+            .then((response) => response.json())
+            .then((data) => {
+                setUrl(data.url)
+        })
     }, []);
+
+    const handleSearchBar = (e) => {
+        var lowerCase = e.target.value.toLowerCase();
+        setSearch(lowerCase);
+    }
 
     return (
         <React.Fragment>
-            <AppNavbar/>
-            {logged ? <ShowMusics /> : <PublicHomepage />}
+            <Navbar isAuthenticated={loggedIn} url={url} handleSearchBar={handleSearchBar}/>
+            {loggedIn ? <ShowAllMusics isSearching={search}/> : <PublicHomepage />}
         </React.Fragment>
     )
 }

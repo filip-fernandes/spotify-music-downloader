@@ -13,6 +13,7 @@ from pathlib import Path
 
 from pytube import YouTube
 
+import os
 
 # The Spotify API url
 BASE_URL = "https://api.spotify.com/v1/"
@@ -126,6 +127,11 @@ def get_playlists(session_id):
             )
     return data
 
+def clear_output_folder():
+    dir_path = "output"
+    for file in os.listdir(dir_path):
+        os.remove(os.path.join(dir_path, file))
+
 # Donwload the desired song from Youtube
 def download_music(search):
     yt = YouTube(f"youtube.com/watch?v={search.results[0].video_id}")
@@ -139,5 +145,8 @@ def download_music(search):
     # Make the song downloadable from the webapp
     response = HttpResponse(FileWrapper(document), content_type='video/mp4')
     response['Content-Disposition'] = 'attachment; filename="%s"' % f"{yt.title}.mp4"
+
+    # Clear the output folder as always
+    clear_output_folder()
 
     return response

@@ -5,8 +5,17 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.music-text:hover{
+.music-text:hover 
+{
     overflow: visible; 
     white-space: normal;
-    height: auto;  /* just added this line */
+}
+.name-text 
+{
+    font-size: medium;
+}
+.artists-text
+{
+    font-size: small;
+    color: rgb(91, 91, 91);
 }

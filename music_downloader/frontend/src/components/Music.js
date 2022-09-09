@@ -4,7 +4,7 @@ import { Box, Card, CardActions, CardContent, CardMedia, Button, Typography } fr
 
 export default function Music(props) {
     return (
-        <Card class="music">
+        <Card>
             <CardMedia
                 component="img"
                 width="200"
@@ -13,11 +13,11 @@ export default function Music(props) {
                 alt={props.name}
             />
             <CardContent className="music-text">
-                <Typography xs={{ fontSize: 12 }} className="music-text" color="text.secondary" gutterBottom>
-                    {props.artists[0]}
-                </Typography>
-                <Typography variant="h9" component="div">
+                <Typography className="name-text" gutterBottom>
                     {props.name}
+                </Typography>
+                <Typography className="artists-text">
+                    {props.artists.join(", ")}
                 </Typography>
             </CardContent>
             <CardActions>

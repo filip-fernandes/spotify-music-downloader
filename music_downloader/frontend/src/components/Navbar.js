@@ -4,25 +4,9 @@ import Nav from "react-bootstrap/Nav";
 import Container  from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import Form from 'react-bootstrap/Form';
 
 export default function AppNavbar(props) {
-  const [url, setUrl] = useState(0);
-  const [loggedIn, setLoggedIn] = useState(0);
-
-  useEffect(() => {
-      fetch("/spotify/is-authenticated")
-      .then((response) => response.json())
-      .then((data) => {
-        setLoggedIn(data.status)
-        console.log(loggedIn)
-      });
-      fetch("/spotify/get-auth-url")
-        .then((response) => response.json())
-        .then((data) => {
-          setUrl(data.url)
-      })
-    }, []);
 
     const logoff = () => {
       fetch("/spotify/logoff")
@@ -32,8 +16,8 @@ export default function AppNavbar(props) {
       <Navbar expand="lg">
         <Container fluid>
           <Navbar.Brand href="#">Music Downloader</Navbar.Brand>
-          {loggedIn ? <Button href="" onClick={logoff}>Logoff</Button>
-          : <Button variant="success" href={url}>Login with Spotify</Button>}
+          {props.isAuthenticated ? <Button href="" onClick={logoff}>Logoff</Button>
+          : <Button variant="success" href={props.url}>Login with Spotify</Button>}
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
             <Nav
@@ -43,6 +27,15 @@ export default function AppNavbar(props) {
             >
             </Nav>
           </Navbar.Collapse>
+          <Form className="d-flex">
+            <Form.Control
+              type="search"
+              placeholder="Search"
+              className="me-2"
+              aria-label="Search"
+              onChange={props.handleSearchBar}
+            />
+          </Form>
         </Container>
       </Navbar>
     );
