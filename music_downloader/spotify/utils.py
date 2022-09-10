@@ -8,12 +8,14 @@ from django.http import HttpResponse
 
 from requests import JSONDecodeError, post, put, get
 
-from wsgiref.util import FileWrapper
 from pathlib import Path
 
 from pytube import YouTube
 
 import os
+
+from unidecode import unidecode
+
 
 # The Spotify API url
 BASE_URL = "https://api.spotify.com/v1/"
@@ -135,7 +137,8 @@ def clear_output_folder():
 # Donwload the desired song from Youtube
 def download_music(search):
     yt = YouTube(f"youtube.com/watch?v={search.results[0].video_id}")
-    audio = yt.streams.get_audio_only() # Buggy, need to change
+
+    audio = yt.streams.get_audio_only()
 
     output = audio.download(output_path="output")
 
@@ -143,8 +146,8 @@ def download_music(search):
     document = open(path, 'rb')
 
     # Make the song downloadable from the webapp
-    response = HttpResponse(FileWrapper(document), content_type='video/mp4')
-    response['Content-Disposition'] = 'attachment; filename="%s"' % f"{yt.title}.mp4"
+    response = HttpResponse(document, content_type='audio/mp4')
+    response['Content-Disposition'] = 'attachment; filename="%s"' % f"{unidecode(yt.title)}.mp4"
 
     # Clear the output folder as always
     clear_output_folder()

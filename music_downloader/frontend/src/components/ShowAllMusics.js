@@ -42,20 +42,20 @@ function ShowAllMusics(props) {
 
     const showSearch = (search) => {
         return (
-        Object.keys(data).map(d => {
-            if (data[d].name.toLowerCase().includes(props.isSearching.toLowerCase()) || 
-            data[d].artists.join(", ").toLowerCase().includes(props.isSearching.toLowerCase())) {
-                return (
-                    <Grid item xs={4} sm={2}>
-                        <Music 
-                            name={data[d].name} 
-                            image={data[d].image} 
-                            artists={data[d].artists} 
-                        />
-                    </Grid>
-                )
-            }
-        })
+            Object.keys(data).map(d => {
+                if (data[d].name.toLowerCase().includes(props.isSearching.toLowerCase()) || 
+                data[d].artists.join(", ").toLowerCase().includes(props.isSearching.toLowerCase())) {
+                    return (
+                        <Grid item xs={4} sm={2}>
+                            <Music 
+                                name={data[d].name} 
+                                image={data[d].image} 
+                                artists={data[d].artists} 
+                            />
+                        </Grid>
+                    )
+                }
+            })
         )
     }
     
