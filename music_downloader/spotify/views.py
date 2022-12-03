@@ -51,12 +51,12 @@ def spotify_callback(request, format=None):
         request.session.create()
     
     if error:
-        return redirect("http://192.168.0.196:8000/")
+        return redirect("http://127.0.0.1:8000/")
 
     update_or_create_user_tokens(
         request.session.session_key, access_token, token_type, expires_in, refresh_token)
 
-    return redirect("http://192.168.0.196:8000/")
+    return redirect("http://127.0.0.1:8000/")
 
 
 # Check whether user is logged in
