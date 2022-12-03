@@ -6,7 +6,7 @@ This webapp allows you to log in with your Spotify account and download songs fr
     React 18.0.0
 
 ### Running this code on your local device
- 1. It is necessary to go to music_downloader/spotify/credentials.py and add the CLIENT_ID and CLIENT_SECRET credentials there. To get those credentials, you need to create an account at Spotify and then create a new app at https://developer.spotify.com/dashboard/applications. 
+ 1. It is necessary to go to music_downloader/spotify/credentials.py and add the CLIENT_ID and CLIENT_SECRET credentials there. To get those credentials, you need to create an account at Spotify and then create a new app at https://developer.spotify.com/dashboard/applications
  2. You should create an empty folder named "output" on music_downloader (parent folder)
  3. Install all python dependencies from requirements.txt and all node modules (you can find these at music_downloader/frontend/package.json)
 
