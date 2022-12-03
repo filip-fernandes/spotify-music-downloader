@@ -12,30 +12,31 @@ export default function AppNavbar(props) {
       fetch("/spotify/logoff")
     };
 
+    const searchAndDownload = () => {
+      return (
+        <Navbar.Collapse id="navbarScroll">
+              <Form className="d-flex">
+                <Form.Control
+                  type="search"
+                  placeholder="Search or Download"
+                  className="me-auto"
+                  aria-label="Search"
+                  onChange={props.handleSearchBar}
+                />
+                <Button href={"/spotify/download?q=" + props.directDownload} variant="primary" size="sm" >Download</Button>
+              </Form>
+        </Navbar.Collapse>
+      )
+    }
+
     return (
       <Navbar expand="lg">
         <Container fluid>
           <Navbar.Brand href="#">Music Downloader</Navbar.Brand>
-          {props.isAuthenticated ? <Button href="" onClick={logoff}>Logoff</Button>
-          : <Button variant="success" href={props.url}>Login with Spotify</Button>}
           <Navbar.Toggle aria-controls="navbarScroll" />
-          <Navbar.Collapse id="navbarScroll">
-            <Nav
-              className="me-auto my-2 "
-              style={{ maxHeight: '100px' }}
-              navbarScroll
-            >
-            </Nav>
-          </Navbar.Collapse>
-          <Form className="d-flex">
-            <Form.Control
-              type="search"
-              placeholder="Search"
-              className="me-2"
-              aria-label="Search"
-              onChange={props.handleSearchBar}
-            />
-          </Form>
+          {props.isAuthenticated ? <Button href="" onClick={logoff} variant="secondary">Sign off</Button>
+          : <Button variant="success" href={props.url}>Sign in</Button>}
+          {searchAndDownload()}
         </Container>
       </Navbar>
     );

@@ -31,7 +31,12 @@ export default function App(props) {
 
     return (
         <React.Fragment>
-            <Navbar isAuthenticated={loggedIn} url={url} handleSearchBar={handleSearchBar}/>
+            <Navbar 
+                isAuthenticated={loggedIn} 
+                url={url} 
+                handleSearchBar={handleSearchBar}
+                directDownload={search}
+            />
             {loggedIn ? <ShowAllMusics isSearching={search}/> : <PublicHomepage />}
         </React.Fragment>
     )

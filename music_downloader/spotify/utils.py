@@ -136,18 +136,22 @@ def clear_output_folder():
 
 # Donwload the desired song from Youtube
 def download_music(search):
-    yt = YouTube(f"youtube.com/watch?v={search.results[0].video_id}")
+    # In case the video is age-restricted, go for the second on the results list
+    try:
+        yt = YouTube(f"youtube.com/watch?v={search.results[0].video_id}")
+        audio = yt.streams.get_audio_only()
+    except KeyError:
+        yt = YouTube(f"youtube.com/watch?v={search.results[1].video_id}")
 
     audio = yt.streams.get_audio_only()
-
     output = audio.download(output_path="output")
 
     path = Path(output)
     document = open(path, 'rb')
 
     # Make the song downloadable from the webapp
-    response = HttpResponse(document, content_type='audio/mp4')
-    response['Content-Disposition'] = 'attachment; filename="%s"' % f"{unidecode(yt.title)}.mp4"
+    response = HttpResponse(document, content_type='audio/mp3')
+    response['Content-Disposition'] = 'attachment; filename="%s"' % f"{unidecode(yt.title)}.mp3"
 
     # Clear the output folder as always
     clear_output_folder()
