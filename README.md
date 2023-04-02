@@ -17,5 +17,5 @@ This webapp allows you to log in with your Spotify account and download songs fr
   4. Enjoy
   
 ### Video demo
-Originally, I made this application for my Final Project in the CS50x course, so I recorded a video showcasing it.<hr>
+Originally, I made this application for my Final Project in the CS50x course, so I recorded a video showcasing it.<br>
 Watch it here: https://www.youtube.com/watch?v=17D_o192Gmw
