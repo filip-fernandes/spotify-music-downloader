@@ -15,3 +15,7 @@ This webapp allows you to log in with your Spotify account and download songs fr
   2. Then, on a new terminal window at music_downloader/frontend, run `npm run dev`
   3. After that, on your favourite browser, go to http://127.0.0.1:8000/
   4. Enjoy
+  
+### Video demo
+Originally, I made this application for my Final Project in the CS50x course, so I recorded a video showcasing it.
+Watch it here: https://www.youtube.com/watch?v=17D_o192Gmw
